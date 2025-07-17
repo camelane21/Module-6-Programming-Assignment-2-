@@ -92,3 +92,24 @@ public class Main extends Application {
             }
         });
     }
+private void runBatch() {
+        if (!checkConnection()) return;
+        String sql = "INSERT INTO Temp(num1, num2, num3) VALUES(?,?,?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 1000; i++) {
+                ps.setDouble(1, Math.random());
+                ps.setDouble(2, Math.random());
+                ps.setDouble(3, Math.random());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            conn.commit();
+            long elapsed = System.currentTimeMillis() - start;
+            batchTime.setText("Batch: " + elapsed + " ms");
+        }
+        catch (Exception ex) {
+            status.setText("Batch error: " + ex.getMessage());
+        }
+    }
