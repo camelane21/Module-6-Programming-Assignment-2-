@@ -133,3 +133,11 @@ private void runBatch() {
             status.setText("Non-batch error: " + ex.getMessage());
         }
     }
+    private boolean checkConnection() {
+        if (conn == null) {
+            status.setText("Not connected");
+            return false;
+        }
+        return true;
+    }
+}
