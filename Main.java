@@ -113,3 +113,23 @@ private void runBatch() {
             status.setText("Batch error: " + ex.getMessage());
         }
     }
+    private void runNonBatch() {
+        if (!checkConnection()) return;
+        String sql = "INSERT INTO Temp(num1, num2, num3) VALUES(?,?,?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 1000; i++) {
+                ps.setDouble(1, Math.random());
+                ps.setDouble(2, Math.random());
+                ps.setDouble(3, Math.random());
+                ps.executeUpdate();
+            }
+            conn.commit();
+            long elapsed = System.currentTimeMillis() - start;
+            normalTime.setText("Non-batch: " + elapsed + " ms");
+        }
+        catch (Exception ex) {
+            status.setText("Non-batch error: " + ex.getMessage());
+        }
+    }
